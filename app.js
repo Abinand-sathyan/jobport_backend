@@ -24,12 +24,18 @@ const app = express();
 app.use(bodyParser.json({ limit: "300kb" }));
 connectDb(DATABASE_URL);
 
+// const corsOptions = {
+//   origin: ["https://main.d20gjfk4zk29ix.amplifyapp.com"],
+//   methods: ["GET", "POST", "PUT", "DELETE"],
+//   allowedHeaders: "Content-Type,Authorization",
+//   optionsSuccessStatus: 200,
+// };
+
 const corsOptions = {
-  origin: ["https://main.d20gjfk4zk29ix.amplifyapp.com"],
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: "Content-Type,Authorization",
-  optionsSuccessStatus: 200,
-};
+    origin: "https://main.d20gjfk4zk29ix.amplifyapp.com",
+    credentials: true,
+    optionSuccessStatus: 200,
+  };
 
 app.use(cors(corsOptions));
 
