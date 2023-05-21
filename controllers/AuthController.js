@@ -320,10 +320,10 @@ const adminlogin = async (req, res) => {
         });
 
       const adminToken = jwt.sign(
-        { id: admin._id },
+        { id: admin._id,role: "admin"},
         process.env.JWT_SECRET_KEY,
         {
-          expiresIn: 60 * 60 * 24,
+          expiresIn: 60 * 60 *24,
         }
       );
       const adminame = admin.Name;

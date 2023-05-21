@@ -10,7 +10,12 @@ module.exports = async (req, res, next) => {
       } else {
         console.log("admin auth--");
         req.admin_id = decode.id;
-        next();
+        if (decode.role =="admin") {
+          console.log("admin with token");
+          next();
+        } else {
+          return res.status(403).send("Access Denied");
+        }
       }
     });
   } catch (error) {
