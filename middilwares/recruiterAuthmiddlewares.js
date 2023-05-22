@@ -8,7 +8,6 @@ module.exports = async (req, res, next) => {
       if (err) {
         return res.status(200).send({ message: "Auth failed", success: false });
       } else {
-        console.log("recruiter auth--");
         req.recuiter_id = decode.id;
         next();
       }

@@ -3,12 +3,11 @@ const jwt = require("jsonwebtoken");
 module.exports = async (req, res, next) => {
   try {
     const token = req.headers["accesstoken"];
-   console.log("etheeeeeee");
+
     jwt.verify(token, process.env.JWT_SECRET_KEY, (err, decode) => {
       if (err) {
         return res.status(200).send({ message: "Auth failed", success: false });
       } else {
-        console.log("user admin auth");
         req.user_id = decode.id;
         next();
       }
