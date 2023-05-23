@@ -66,7 +66,7 @@ app.use("/conversation", conversation);
 app.use("/message", message);
 
 app.listen(port, () => {
-  console.log(`server listening at http://127.0.0.1:${port}`);
+  
 });
 
 module.exports = app;
