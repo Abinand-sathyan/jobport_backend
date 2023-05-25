@@ -149,23 +149,51 @@ const googleAuth = async (req, res) => {
 
     if (user) {
       const userToken = jwt.sign(
-        { id: new mongoose.Types.ObjectId("6453a0846e50dad2bff4e3f6") },
+        { id: user._id },
+
         process.env.JWT_SECRET_KEY,
         {
           expiresIn: 60 * 60 * 24,
         }
       );
-      return res.status(200).json({ user, userToken });
+      const username = user.first_name;
+      const userid = user._id;
+      return res.status(200).send({ 
+        messagr: "login success",
+        success: true,
+        username,
+        userid,
+        userToken,
+       });
+    } else {
+      const newUser = new UserDB({
+        first_name: given_name,
+        last_name: family_name,
+        email_address: email,
+      });
+
+      await newUser.save();
+
+      const userToken = jwt.sign(
+        { id: newUser._id },
+
+        process.env.JWT_SECRET_KEY,
+        {
+          expiresIn: 60 * 60 * 24,
+        }
+      );
+      const username = newUser.first_name;
+      const userid = newUser._id;
+
+      res.status(200).send({
+        messagr: "login success",
+        success: true,
+        username,
+        userid,
+        userToken,
+      });
+      // res.status(200).json(userToken);
     }
-
-    const newUser = new UserDB({
-      first_name: given_name,
-      last_name: family_name,
-      email_address: email,
-    });
-
-    await newUser.save();
-    res.status(200).json(userToken);
   } catch (err) {
     res.status(400).json({ message: err });
   }
@@ -320,10 +348,10 @@ const adminlogin = async (req, res) => {
         });
 
       const adminToken = jwt.sign(
-        { id: admin._id,role: "admin"},
+        { id: admin._id, role: "admin" },
         process.env.JWT_SECRET_KEY,
         {
-          expiresIn: 60 * 60 *24,
+          expiresIn: 60 * 60 * 24,
         }
       );
       const adminame = admin.Name;

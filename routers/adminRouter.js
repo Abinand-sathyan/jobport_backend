@@ -11,7 +11,9 @@ const {userlist,
     pendingjob,
     addsubscription,
     subscriptiondata,
-    getdashBoard}=require("../controllers/Admincontroller")
+    getdashBoard,
+    ReqSubscription,
+    Subcancel}=require("../controllers/Admincontroller")
 const adminAuthmiddlewares=require("../middilwares/adminAuthmiddlewares")
 
 
@@ -26,5 +28,7 @@ router.patch("/approvejob",adminAuthmiddlewares,approvejob)
 router.patch("/pendingjob",adminAuthmiddlewares,pendingjob)
 router.post("/addsubscription",adminAuthmiddlewares,addsubscription)
 router.get("/subscriptiondata",adminAuthmiddlewares,subscriptiondata)
+router.get("/ReqSub",adminAuthmiddlewares,ReqSubscription)
+router.post("/Subcancel",adminAuthmiddlewares,Subcancel)
 router.get("/getdashboard",getdashBoard)
 module.exports= router

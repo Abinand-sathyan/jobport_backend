@@ -4,17 +4,28 @@ const bcrypt = require("bcryptjs");
 const UserDB = require("../models/usermdel");
 const jobDB = require("../models/jobmodel");
 const resume = require("../models/resume");
+const Subscription = require("../models/Subscription");
 const Recruiter = require("../models/recuritermodel");
 const { default: mongoose } = require("mongoose");
 
 const jobdata = async (req, res) => {
   try {
+    let resumee = false;
+
+    const user_id = req.user_id;
+
     const jobdata = await jobDB
       .find({ isActive: false })
       .populate("users.userId");
 
-    if (jobdata.length > 0)
-      return res.status(200).send({ jobdata, success: true });
+    const checksub = await resume.find({ userId: user_id });
+
+    if (checksub.length > 0) {
+      resumee = true;
+    }
+    if (jobdata.length > 0) {
+      return res.status(200).send({ jobdata, success: true, resumee });
+    }
   } catch (error) {
     return res.status(500).send({
       success: false,

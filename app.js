@@ -24,13 +24,6 @@ const app = express();
 app.use(bodyParser.json({ limit: "300kb" }));
 connectDb(DATABASE_URL);
 
-// const corsOptions = {
-//   origin: ["https://main.d20gjfk4zk29ix.amplifyapp.com"],
-//   methods: ["GET", "POST", "PUT", "DELETE"],
-//   allowedHeaders: "Content-Type,Authorization",
-//   optionsSuccessStatus: 200,
-// };
-
 const corsOptions = {
     origin: "https://main.d20gjfk4zk29ix.amplifyapp.com",
     credentials: true,
@@ -38,6 +31,8 @@ const corsOptions = {
   };
 
 app.use(cors(corsOptions));
+
+// app.use(cors());
 
 app.use(express.json());
 app.use(logger("dev"));
@@ -65,8 +60,6 @@ app.use("/Auth", authRouter);
 app.use("/conversation", conversation);
 app.use("/message", message);
 
-app.listen(port, () => {
-  
-});
+app.listen(port, () => {});
 
 module.exports = app;

@@ -172,35 +172,40 @@ const getMonthName = (monthNumber) => {
   return months[monthNumber - 1];
 };
 
-const getdashBoard = async(req, res) => {
-  try{
-  const saleReport = await subscriptonDB.aggregate([
-    {
-      $group: {
-        _id: { $dateToString: { format: "%m", date: "$createdAt" } },
-        profit_count: { $sum: 1 },
+const getdashBoard = async (req, res) => {
+  try {
+    const saleReport = await subscriptonDB.aggregate([
+      {
+        $group: {
+          _id: { $dateToString: { format: "%m", date: "$createdAt" } },
+          profit_count: { $sum: 1 },
+        },
       },
-    },
-    { $sort: { _id: 1 } },
-  ]);
+      { $sort: { _id: 1 } },
+    ]);
 
-  const result = saleReport.map((report) => {
-    const month = getMonthName(report._id);
-    report.month = month;
-    return report;
-});
+    const result = saleReport.map((report) => {
+      const month = getMonthName(report._id);
+      report.month = month;
+      return report;
+    });
 
-const standard = await subscriptonDB.find({subscriptioname:"standard"}).count()
-const basic = await subscriptonDB.find({subscriptioname:"basic"}).count()
-const premium = await subscriptonDB.find({subscriptioname:"premium"}).count()
+    const standard = await subscriptonDB
+      .find({ subscriptioname: "standard" })
+      .count();
+    const basic = await subscriptonDB
+      .find({ subscriptioname: "basic" })
+      .count();
+    const premium = await subscriptonDB
+      .find({ subscriptioname: "premium" })
+      .count();
 
-let data = [];
+    let data = [];
     data.push(standard);
     data.push(basic);
     data.push(premium);
-res.status(200).json({ result, data });  
-  }catch (error) {
-   
+    res.status(200).json({ result, data });
+  } catch (error) {
     return res.status(500).send({
       success: false,
       message: error.message,
@@ -208,65 +213,46 @@ res.status(200).json({ result, data });
   }
 };
 
+const ReqSubscription = async (req, res) => {
+  try {
+    const reqsubscription = await subscriptonDB.find().populate("RecruiterId");
 
+    if (reqsubscription.length > 0)
+      return res.status(200).send({ reqsubscription });
+  } catch (error) {
+    return res.status(500).send({
+      success: false,
+      message: error.message,
+    });
+  }
+};
 
-
-
-
-// const getMonthNameE = (monthNumber) => {
-//   const months = [
-//     "January",
-//     "February",
-//     "March",
-//     "April",
-//     "May",
-//     "June",
-//     "July",
-//     "August",
-//     "September",
-//     "October",
-//     "November",
-//     "December",
-//   ];
-//   return months[monthNumber - 1];
-// };
-
-// export const getDashBord = async (req, res) => {
-//   try {
-//     const profit = await orderDb.aggregate([
-//       {
-//         $group: {
-//           _id: { $dateToString: { format: "%m", date: "$createdAt" } },
-//           profit_count: { $sum: 1 },
-//         },
-//       },
-//       { $sort: { _id: 1 } },
-//     ]);
-
-//     const result = profit.map((report) => {
-//       const month = getMonthName(report._id);
-//       report.month = month;
-//       return report;
-//     });
-//     const pending = await orderDb.find({ orderStatus: "pending" }).count();
-//     const complete = await orderDb.find({ orderStatus: "complete" }).count();
-//     const cancel = await orderDb.find({ orderStatus: "cancel" }).count();
-//     const completePayment = await orderDb
-//       .find({ orderStatus: "complete Payment" })
-//       .count();
-//     
-//     let data = [];
-//     data.push(pending);
-//     data.push(complete);
-
-//     data.push(cancel);
-//     data.push(completePayment);
-
-//     res.status(200).json({ result, data });
-//   } catch (err) {
-//     res.status(500).json({ error:"internal server error" });
-//   }
-// };
+const Subcancel = async (req, res) => {
+  try {
+    const subscriptionId = req.body.data.subscription;
+    const recruiter = req.body.data.recrfuiter;
+    await subscriptonDB.updateOne(
+      { _id: subscriptionId },
+      { $pull: { RecruiterId: recruiter } }
+    );
+    await recruiterDB.updateOne(
+      { _id: recruiter },
+      {
+        $unset: {
+          subscription: "",
+          subscriptiondate: "",
+          subscriptionexpirydate: "",
+        },
+      }
+    );
+    res.status(200).send({ success: true });
+  } catch (error) {
+    return res.status(500).send({
+      success: false,
+      message: error.message,
+    });
+  }
+};
 
 module.exports = {
   userlist,
@@ -281,4 +267,6 @@ module.exports = {
   addsubscription,
   subscriptiondata,
   getdashBoard,
+  ReqSubscription,
+  Subcancel,
 };

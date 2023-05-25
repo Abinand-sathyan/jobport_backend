@@ -8,7 +8,7 @@ function sendotp(sendotpphone) {
   client.verify.v2
     .services(verifySid)
     .verifications.create({ to: `+91${sendotpphone}`, channel: "sms" })
-    .then((verification) => console.log(verification.status));
+    .then((verification) =>{});
 }
 
 function verifyotp(phone, otp) {
@@ -17,8 +17,7 @@ function verifyotp(phone, otp) {
       .services(verifySid)
       .verificationChecks.create({ to: `+91${phone}`, code: otp })
       .then((verification_check) => {
-        console.log(verification_check.status);
-        resolve(verification_check);
+       resolve(verification_check);
       });
   });
 }
