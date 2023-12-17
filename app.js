@@ -25,7 +25,7 @@ app.use(bodyParser.json({ limit: "300kb" }));
 connectDb(DATABASE_URL);
 
 const corsOptions = {
-    origin: "https://main.d20gjfk4zk29ix.amplifyapp.com",
+    origin: "https://main.d1mvp6z4onxy0.amplifyapp.com",
     credentials: true,
     optionSuccessStatus: 200,
   };
